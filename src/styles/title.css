@@ -1,0 +1,8 @@
+.title {
+  font-family:  serif;
+  font-variant: small-caps;
+  background: rgb(241,35,9);
+  background: linear-gradient(180deg, rgba(35,9,249,1) 0%, rgba(12,133,226,1) 48%, rgba(0,255,241,1) 94%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
