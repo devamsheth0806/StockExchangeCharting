@@ -1,70 +1,169 @@
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import AddCompany from "./addCompany";
-import axios from 'axios';
 import companyServices from '../../services/company.services';
-import AddCompanyToStockExchange from './addCompanyToStockExchange';
-
+import Select from 'react-select';
+import UserContext from "../../contexts/userContext";
 class Companies extends Component {
+  static contextType = UserContext;
+  _isMounted = false;
   constructor() {
     super();
     this.state = {
       show: false,
-      showToStock: false,
-      companies: []
+      searchedCompany: [],
+      companies: [],
+      id: null,
+      update: false,
+      fetched: false
     };
+
+    this.searchRef = createRef();
     this.handleShow = this.handleShow.bind(this);
-    this.handleShowToStock = this.handleShowToStock.bind(this);
-    this.handleCloseToStock = this.handleCloseToStock.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.fetchAllCompanies = this.fetchAllCompanies.bind(this);
+    this.dosearch = this.dosearch.bind(this);
   }
 
-  handleShow() {
-    this.setState({ show: true });
+  handleShow(id) {
+    this.setState({ show: true, id: id });
   }
 
-  handleShowToStock() {
-    this.setState({ showToStock: true });
-  }
-
-  handleCloseToStock() {
-    this.setState({ showToStock: false });
-  }
-
-  async handleClose() {
-    this.setState({ show: false });
-    this.fetchAllCompanies();
+  handleClose() {
+    this.setState({ update: true, show: false });
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.fetchAllCompanies();
   }
 
-  async fetchAllCompanies() {
-    const response = await companyServices.getCompanies();
+  dosearch() {
+    let searchval = this.searchRef.current.state.value;//get node value or text value
+    if (searchval != null) {
+      this.searchRef.current.state.value = null;
+      this.fetchCompanyById(searchval.value);
+    }
+    else {
+      this.setState({
+        searchedCompany: []
+      })
+      this.fetchAllCompanies();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.update) {
+      this.fetchAllCompanies();
+      this.setState({ update: false });
+    }
+    if (this.state.fetched) {
+      this.setState({ fetched: false });
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+  async delete(id) {
+    await companyServices.deleteCompany(id);
     this.setState({
-      companies: response.data
-    });
+      update: true
+    })
+  }
+
+  async fetchCompanyById(id) {
+    if (this._isMounted) {
+      const response = await companyServices.getCompanyById(id);
+      this.setState({
+        searchedCompany: [response.data],
+        fetched: true
+      });
+    }
+  }
+
+  async fetchAllCompanies() {
+    if (this._isMounted) {
+      const response = await companyServices.getCompanies();
+      this.setState({
+        companies: response.data,
+        fetched: true
+      });
+    }
   }
 
   render() {
-    const companies = this.state.companies.map((company) => {
-      return <tr>
-        <td>{company.companyName}</td>
-        <td>{company.ceo}</td>
-        <td>{company.turnover}</td>
-        <td>{company.sector.sectorName}</td>
-        <td>
-          <a className="btn btn-secondary btn-sm">
-            Edit
-          </a>
-        </td>
-        <td>
-          <button className="btn btn-secondary btn-sm">
-            Delete
-          </button>
-        </td>
-      </tr>
+    var companies;
+    if (this.state.searchedCompany.length > 0) {
+      companies = this.state.searchedCompany.map((company) => {
+        return <tr key={company.id}>
+          <td>{company.companyName}</td>
+          <td>{company.ceo}</td>
+          <td>{company.turnover}</td>
+          <td>{company.sector.sectorName}</td>
+          {
+            this.context.user == "ADMIN"
+              ?
+              <td>
+                <button className="btn btn-success btn-sm" onClick={() => this.handleShow(company.id)}>
+                  Edit
+                </button>
+              </td>
+              :
+              null
+          }
+          {
+            this.context.user == "ADMIN"
+              ?
+              <td>
+                <button className="btn btn-danger btn-sm" onClick={() => this.delete(company.id)} >
+                  Delete
+                </button>
+              </td>
+              :
+              null
+          }
+        </tr>
+      });
+    }
+    else {
+      companies = this.state.companies.map((company) => {
+        return <tr key={company.id}>
+          <td>{company.companyName}</td>
+          <td>{company.ceo}</td>
+          <td>{company.turnover}</td>
+          <td>{company.sector.sectorName}</td>
+          {
+            this.context.user == "ADMIN"
+              ?
+              <td>
+                <button className="btn btn-success btn-sm" onClick={() => this.handleShow(company.id)}>
+                  Edit
+                </button>
+              </td>
+              :
+              null
+          }
+          {
+            this.context.user == "ADMIN"
+              ?
+              <td>
+                <button className="btn btn-danger btn-sm" onClick={() => this.delete(company.id)} >
+                  Delete
+                </button>
+              </td>
+              :
+              null
+          }
+        </tr>
+      });
+    }
+
+    const companyOptions = this.state.companies.map(company => {
+      return {
+        label: company.companyName,
+        value: company.id
+      };
     });
 
 
@@ -73,9 +172,27 @@ class Companies extends Component {
         <div className="d-flex flex-row justify-content-center">
           <h1 className="text-primary">Companies</h1>
         </div>
-        <div className="d-flex flex-row-reverse m-2">
-          <button className="btn btn-primary" onClick={this.handleShow}>Add Company</button>
-          <button className="btn btn-primary" onClick={this.handleShowToStock}>Add Company To Stock Exchange</button>
+        <div className="d-flex flex-row m-2">
+          <div className="m-1 flex-fill">
+            <Select
+              type="text"
+              className="form-control"
+              placeholder="Search Companies"
+              ref={this.searchRef}
+              options={companyOptions}
+            />
+          </div>
+          <button className="btn btn-primary btn-block m-1" type="button" onClick={this.dosearch} >
+            Go
+          </button>
+
+          {
+            this.context.user == "ADMIN"
+              ?
+              <button className="btn btn-primary m-1 " onClick={this.handleShow}>Add Company</button>
+              :
+              null
+          }
         </div>
         <div className="d-flex flex-row">
           <table className="table table-striped">
@@ -85,8 +202,20 @@ class Companies extends Component {
                 <th>CEO</th>
                 <th>Turnover</th>
                 <th>Sector</th>
-                <th>Edit </th>
-                <th>Delete</th>
+                {
+                  this.context.user == "ADMIN"
+                    ?
+                    <th>Edit </th>
+                    :
+                    null
+                }
+                {
+                  this.context.user == "ADMIN"
+                    ?
+                    <th>Delete</th>
+                    :
+                    null
+                }
               </tr>
             </thead>
             <tbody>
@@ -94,8 +223,7 @@ class Companies extends Component {
             </tbody>
           </table >
         </div>
-        <AddCompany handleClose={this.handleClose} open={this.state.show} />
-        <AddCompanyToStockExchange handleClose={this.handleCloseToStock} open={this.state.showToStock} />
+        <AddCompany handleClose={this.handleClose} open={this.state.show} id={this.state.id} />
       </div >
     )
   }

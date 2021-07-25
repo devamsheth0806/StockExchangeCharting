@@ -1,11 +1,16 @@
 import { Component } from 'react';
 import UploadStockPrices from './uploadStockPrices';
-import axios from 'axios';
+import stockPriceServices from '../../services/stockPrice.services';
+import UserContext from "../../contexts/userContext";
 class StockPrices extends Component {
+  static contextType = UserContext;
+  _isMounted = false;
   constructor() {
     super();
     this.state = {
       show: false,
+      update: false,
+      fetched: false,
       stockPrices: []
     };
     this.handleShow = this.handleShow.bind(this);
@@ -18,20 +23,47 @@ class StockPrices extends Component {
   }
 
   handleClose() {
-    this.setState({ show: false });
+    this.setState({ show: false, update: true });
   }
-  async fetchAllStockPrices() {
-    const response = await axios.get("http://localhost:8080/stockprices");
+
+  async delete(id) {
+    await stockPriceServices.deleteStockPrice(id);
     this.setState({
-      stockPrices: response.data
-    });
+      update: true
+    })
   }
-  
-  componentDidMount(){
+
+  async fetchAllStockPrices() {
+    if (this._isMounted) {
+      const response = await stockPriceServices.getStockPrices();
+      this.setState({
+        stockPrices: response.data,
+        fetched: true
+      });
+    }
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
     this.fetchAllStockPrices();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.update) {
+      this.fetchAllStockPrices();
+      this.setState({ update: false });
+    }
+    if (this.state.fetched) {
+      this.setState({ fetched: false });
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   render() {
+
     const stockPrices = this.state.stockPrices.map(stockPrice => {
       return <tr key={stockPrice.id}>
         <td>{stockPrice.companyCode}</td>
@@ -39,16 +71,18 @@ class StockPrices extends Component {
         <td>{stockPrice.sharePrice}</td>
         <td>{stockPrice.datee}</td>
         <td>{stockPrice.timee}</td>
-        <td>
-          <a className="btn btn-secondary btn-sm">
-            Edit
-          </a>
-        </td>
-        <td>
-          <button className="btn btn-secondary btn-sm">
-            Delete
-          </button>
-        </td>
+        {
+          this.context.user == "ADMIN"
+            ?
+            <td>
+              <button className="btn btn-danger btn-sm" onClick={() => this.delete(stockPrice.id)} >
+                Delete
+              </button>
+            </td>
+            :
+            null
+        }
+
       </tr>
     });
     return (
@@ -56,8 +90,16 @@ class StockPrices extends Component {
         <div className="d-flex flex-row justify-content-center">
           <h1 className="text-primary">Stock Prices</h1>
         </div>
+
         <div className="d-flex flex-row-reverse m-2">
-          <button className="btn btn-primary" onClick={this.handleShow}>Upload Excel</button>
+          {
+            this.context.user == "ADMIN"
+              ?
+              <button className="btn btn-primary" onClick={this.handleShow}>Upload Excel</button>
+              :
+              null
+          }
+
         </div>
         <div className="d-flex flex-row">
           <table className="table table-striped">
@@ -68,8 +110,13 @@ class StockPrices extends Component {
                 <th>Current Price</th>
                 <th>Date</th>
                 <th>Time</th>
-                <th>Edit </th>
-                <th>Delete</th>
+                {
+                  this.context.user == "ADMIN"
+                    ?
+                    <th>Delete</th>
+                    :
+                    null
+                }
               </tr>
             </thead>
             <tbody>

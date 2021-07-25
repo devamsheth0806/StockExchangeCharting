@@ -16,25 +16,43 @@ class AddSector extends Component {
         boxShadow: 5,
         padding: "2px 4px 3px"
       },
-      sector:{}
+      sector: {}
     }
     this.addSector = this.addSector.bind(this);
+    this.updateSector = this.updateSector.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  async addSector(sector){
-    const response = await sectorServices.addSector(sector).statusText;    
+  async updateSector(sector) {
+    await sectorServices.updateSector(sector).statusText;
+    this.props.handleClose();
+  }
+
+  async addSector(sector) {
+    await sectorServices.addSector(sector).statusText;
+    this.props.handleClose();
+  }
+
+  async fetchSectorById(id) {
+    const response = await sectorServices.getSectorById(id);
+    this.setState({
+      sector : response.data
+    })
     // console.log(response);
   }
 
-  handleSubmit(event){
+  handleSubmit(event) {
     event.preventDefault();
     var sector = this.state.sector;
-    sector.id = -1;
+    const id = this.props.id;
+    if (!Number.isInteger(id)) {
+      sector.id = -1;
+      this.addSector(this.state.sector);
+    }
+    else
+      this.updateSector(sector);
     // console.log(sector);
-    this.addSector(this.state.sector);
-    this.props.handleClose();
   }
 
   handleChange = (event) => {
@@ -46,44 +64,99 @@ class AddSector extends Component {
     this.setState({ sector: sector });
   }
 
-  render() {
-    return (
-      <Modal open={this.props.open} onClose={this.props.handleClose}>
-        <div className="container" style={this.state.style}>
-          <form onSubmit={this.handleSubmit}>
-            <div className="modal-header">
-              <h3 className="modal-title">Add Sector</h3>
-            </div>
-            <div className="modal-body">
-              <div className="form-group m-2">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="sectorName"
-                  placeholder="Sector Name"
-                  minLength="2"
-                  onChange={this.handleChange}
-                  required />
-              </div>
+  async componentDidUpdate(prevProps, prevState){
+    if (prevProps.id != this.props.id) {
+      if (Number.isInteger(this.props.id)) {
+        await this.fetchSectorById(this.props.id);
+      }
+    }
+  }
 
-              <div className="form-group m-2">
-                <textarea
-                  type="text"
-                  className="form-control"
-                  name="brief"
-                  placeholder="Brief"
-                  minLength="2"
-                  onChange={this.handleChange}
-                  required />
-              </div >
+  render() {
+
+    const sector = this.state.sector;
+
+    const addModal = <Modal open={this.props.open} onClose={this.props.handleClose}>
+      <div className="container" style={this.state.style}>
+        <form onSubmit={this.handleSubmit}>
+          <div className="modal-header">
+            <h3 className="modal-title">Add Sector</h3>
+          </div>
+          <div className="modal-body">
+            <div className="form-group m-2">
+              <input
+                type="text"
+                className="form-control"
+                name="sectorName"
+                placeholder="Sector Name"
+                minLength="2"
+                onChange={this.handleChange}
+                required />
             </div>
-            <div className="modal-footer d-flex flex-row justify-content-center">
-              <input type="submit" value="Submit" className="btn btn-primary btn-block" />
-              <button type="button" className="btn btn-danger" onClick={this.props.handleClose}>Close</button>
+
+            <div className="form-group m-2">
+              <textarea
+                type="text"
+                className="form-control"
+                name="brief"
+                placeholder="Brief"
+                minLength="2"
+                onChange={this.handleChange}
+                required />
+            </div >
+          </div>
+          <div className="modal-footer d-flex flex-row justify-content-center">
+            <input type="submit" value="Submit" className="btn btn-primary btn-block" />
+            <button type="button" className="btn btn-danger" onClick={this.props.handleClose}>Close</button>
+          </div>
+        </form>
+      </div>
+    </Modal>
+
+    const updateModal = <Modal open={this.props.open} onClose={this.props.handleClose}>
+      <div className="container" style={this.state.style}>
+        <form onSubmit={this.handleSubmit}>
+          <div className="modal-header">
+            <h3 className="modal-title">Update Sector</h3>
+          </div>
+          <div className="modal-body">
+            <div className="form-group m-2">
+              <input
+                type="text"
+                className="form-control"
+                name="sectorName"
+                placeholder="Sector Name"
+                minLength="2"
+                value={sector.sectorName}
+                onChange={this.handleChange}
+                required />
             </div>
-          </form>
-        </div>
-      </Modal>
+
+            <div className="form-group m-2">
+              <textarea
+                type="text"
+                className="form-control"
+                name="brief"
+                placeholder="Brief"
+                minLength="2"
+                value={sector.brief}
+                onChange={this.handleChange}
+                required />
+            </div >
+          </div>
+          <div className="modal-footer d-flex flex-row justify-content-center">
+            <input type="submit" value="Submit" className="btn btn-primary btn-block" />
+            <button type="button" className="btn btn-danger" onClick={this.props.handleClose}>Close</button>
+          </div>
+        </form>
+      </div>
+    </Modal>
+
+    const id = this.props.id;
+    return (
+      <div>
+        { (Number.isInteger(id)) ? updateModal : addModal }
+      </div>
     )
   }
 }

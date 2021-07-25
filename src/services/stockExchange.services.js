@@ -6,14 +6,18 @@ class StockExchangeSerivces{
     return http.get("/stockExchanges");
   }
   
+  getStockExchangeById(id){
+    return http.get(`/stockExchanges/${id}`);
+  }
+
   addStockExchange(stockExchange){
     return http.post("/stockExchanges/add", stockExchange);
   }
   updateStockExchange(stockExchange){
-    return http.put("/stockExchange/update", stockExchange);
+    return http.put("/stockExchanges/update", stockExchange);
   }
   deleteStockExchange(id){
-    return http.delete(`/stockExchange/delete/${id}`);
+    return http.delete(`/stockExchanges/delete/${id}`);
   }
 }
 
