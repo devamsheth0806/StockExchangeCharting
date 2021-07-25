@@ -43,7 +43,10 @@ public class IPODetailsServicesImpl implements IPODetailsServices {
 	@Override
 	public IPODetails updateIPODetails(IPODetails ipoDetails) {
 		Company company = companyServices.findByName(ipoDetails.getCompanyName());
-		if(!ipoDetailsRepository.findById(ipoDetails.getId()).isPresent()|| ipoDetailsRepository.findByCompany(company)==null)
+		if(!ipoDetailsRepository.findById(ipoDetails.getId()).isPresent())
+			return null;
+		IPODetails ipoDetails2 =  ipoDetailsRepository.findByCompany(company);
+		if(ipoDetails2!=null && !ipoDetails.getId().equals(ipoDetails2.getId()))
 			return null;
 		ipoDetails.setStockExchanges(new ArrayList<>());
 		for(String stockExchangeName: ipoDetails.getStockExchangeNames()) {

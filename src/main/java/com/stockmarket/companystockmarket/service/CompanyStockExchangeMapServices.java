@@ -14,7 +14,7 @@ public interface CompanyStockExchangeMapServices {
 	public CompanyStockExchangeMap findById(Long id);
 	public List<CompanyStockExchangeMap> findByCode(String code);
 	public List<CompanyStockExchangeMap> findByCompany(Company company);
-	public List<Company> findByStockExchange(StockExchange stockExchange);
+	public List<CompanyStockExchangeMap> findByStockExchange(StockExchange stockExchange);
 	public Company findByCompanyCodeAndStockExchange(String code, String stockExchangeName);
 	public Long deleteById(Long id);
 }

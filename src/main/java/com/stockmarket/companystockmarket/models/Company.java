@@ -71,6 +71,7 @@ public class Company {
 	private Sector sector;
 	
 	@OneToMany(targetEntity = StockPrice.class, mappedBy = "company", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<StockPrice> stockPrices;
 	
 }

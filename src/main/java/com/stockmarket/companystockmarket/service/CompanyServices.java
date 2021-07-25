@@ -14,7 +14,7 @@ public interface CompanyServices {
 	public Optional<Company> findById(Long id);
 	public List<Company> getMatchingCompanies(String pattern);
 	public Company addCompany(Company company);
-	public Company editCompany(Company company);
+	public Company updateCompany(Company company);
 	public Company findByName(String name);
 	public Long deleteCompany(Long id);
 	public IPODetails getCompanyIpoDetails(Long id);

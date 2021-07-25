@@ -32,8 +32,10 @@ public class SectorServicesImpl implements SectorServices {
 
 	@Override
 	public Sector updateSector(Sector sector) {
-		if (sectorRepo.findById(sector.getId()).isEmpty()
-				|| sectorRepo.findSectorBySectorName(sector.getSectorName()) == null)
+		if (sectorRepo.findById(sector.getId()).isEmpty())
+			return null;
+		Sector sector2 = sectorRepo.findSectorBySectorName(sector.getSectorName());
+		if(sector2!=null && !sector2.getId().equals(sector.getId()) )
 			return null;
 		sector = sectorRepo.save(sector);
 		return sector;

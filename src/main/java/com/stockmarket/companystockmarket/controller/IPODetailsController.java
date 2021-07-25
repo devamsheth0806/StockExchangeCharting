@@ -68,7 +68,7 @@ public class IPODetailsController {
 		return ResponseEntity.ok(ipoDetails);
 	}
 	
-	@DeleteMapping(path = "/delete/{id}", consumes="application/json" , produces = "application/json")
+	@DeleteMapping(path = "/delete/{id}", produces = "application/json")
 	public ResponseEntity<?> deleteIPODetails(@PathVariable Long id){
 		id = ipoDetailsServices.deleteById(id);
 		if (id==null) {

@@ -44,10 +44,12 @@ public class IPODetails {
 	private Company company;
 
 	@NonNull
-	private String companyName; 
+	private String companyName;
+	
+	@NonNull
+	private String remarks;
 	
 	@ManyToMany
-	@JsonIgnore
 	private List<StockExchange> stockExchanges;
 	
 	@Transient

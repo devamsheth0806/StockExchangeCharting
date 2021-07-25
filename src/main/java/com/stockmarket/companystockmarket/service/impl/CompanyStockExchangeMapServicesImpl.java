@@ -84,12 +84,12 @@ public class CompanyStockExchangeMapServicesImpl implements CompanyStockExchange
 
 	@Override
 	public List<CompanyStockExchangeMap> findByCompany(Company company) {
-		return companyStockExchangeMapRepository.findAll();
+		return companyStockExchangeMapRepository.findByCompany(company);
 	}
 
 	@Override
-	public List<Company> findByStockExchange(StockExchange stockExchange) {
-		return companyStockExchangeMapRepository.findCompanyByStockExchange(stockExchange);
+	public List<CompanyStockExchangeMap> findByStockExchange(StockExchange stockExchange) {
+		return companyStockExchangeMapRepository.findByStockExchange(stockExchange);
 	}
 
 }

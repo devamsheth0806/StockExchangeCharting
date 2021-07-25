@@ -45,7 +45,7 @@ public class CompanyServicesImpl implements CompanyServices {
 
 	@Override
 	public List<Company> getMatchingCompanies(String pattern) {
-		return compRepo.findCompanyByCompanyNameIgnoreCaseContaining(pattern);
+		return compRepo.findCompanyByCompanyNameContainingIgnoreCase(pattern);
 	}
 
 	@Override
@@ -58,9 +58,13 @@ public class CompanyServicesImpl implements CompanyServices {
 
 	      
 	@Override
-	public Company editCompany(Company company) {
-		if(!compRepo.findById(company.getId()).isPresent()|| compRepo.findCompanyByCompanyName(company.getCompanyName())==null)
+	public Company updateCompany(Company company) {
+		if(!compRepo.findById(company.getId()).isPresent())
 			return null;
+		Company searchedCompany = compRepo.findCompanyByCompanyName(company.getCompanyName());
+		if(searchedCompany!=null && !searchedCompany.getId().equals(company.getId()))
+			return null;
+		company.setSector(sectorServices.findByName(company.getSectorName()));
 		return compRepo.save(company);
 	}
 
@@ -102,12 +106,9 @@ public class CompanyServicesImpl implements CompanyServices {
 	}
 	
 	public List<StockPrice> getCompanyStockPrice(Long id, LocalDate from, LocalDate to){//, String periodicity){
-		Company company = compRepo.findById(id).get();
-		if (company==null) {
-			return null;
-		}
+		List<StockPrice> companyStockPrices = compRepo.findCompanyStockPrices(id);
 		List<StockPrice> stockPrices = new ArrayList<>();
-		company.getStockPrices().forEach( s -> {
+		companyStockPrices.forEach( s -> {
 			if(!(s.getDatee().isAfter(to) || s.getDatee().isBefore(from))) {
 				stockPrices.add(s);
 			}

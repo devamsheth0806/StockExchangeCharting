@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.stockmarket.companystockmarket.models.CompanyStockExchangeMap;
+import com.stockmarket.companystockmarket.models.StockExchange;
 import com.stockmarket.companystockmarket.service.CompanyStockExchangeMapServices;
 
 @RestController
@@ -45,6 +46,15 @@ public class CompanyStockExchangeMapController {
 		return ResponseEntity.ok(companyStockExchangeMap);
 	}
 	
+	@PostMapping(path = "/getCompanies", consumes="application/json" , produces = "application/json")
+	public ResponseEntity<?> getByStockExchange(@RequestBody StockExchange stockExchange) {
+		List<CompanyStockExchangeMap> companies = companyStockExchangeMapServices.findByStockExchange(stockExchange);
+		if (companies == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Stock Exchange not found");
+		}
+		return ResponseEntity.ok(companies);
+	}
+	
 	@PostMapping(path = "/add", consumes="application/json" , produces = "application/json")
 	public ResponseEntity<?> addCompanyStockExchangeMap(@RequestBody CompanyStockExchangeMap companyStockExchangeMap){
 		companyStockExchangeMap = companyStockExchangeMapServices.addCompanyStockExchangeMap(companyStockExchangeMap);
@@ -68,7 +78,7 @@ public class CompanyStockExchangeMapController {
 		return ResponseEntity.ok(companyStockExchangeMap);
 	}
 	
-	@DeleteMapping(path = "/delete/{id}", consumes="application/json" , produces = "application/json")
+	@DeleteMapping(path = "/delete/{id}" , produces = "application/json")
 	public ResponseEntity<?> deleteCompanyStockExchangeMap(@PathVariable Long id){
 		id = companyStockExchangeMapServices.deleteById(id);
 		if (id==null) {

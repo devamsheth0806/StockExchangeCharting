@@ -33,10 +33,10 @@ public class CompanyStockExchangeMap {
 	@Transient
 	private String stockExchangeName;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Company company;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+	@ManyToOne(fetch = FetchType.LAZY)
 	private StockExchange stockExchange;
 
 }

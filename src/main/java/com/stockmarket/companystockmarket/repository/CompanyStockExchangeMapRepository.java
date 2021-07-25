@@ -15,7 +15,11 @@ public interface CompanyStockExchangeMapRepository extends JpaRepository<Company
 
 	CompanyStockExchangeMap findByCompanyAndStockExchange(Company company, StockExchange stockExchange);
 	List<CompanyStockExchangeMap> findByCompanyCode(String Code);
+	List<CompanyStockExchangeMap> findByCompany(Company company);
 	CompanyStockExchangeMap findCompanyByCompanyCodeAndStockExchange(String code, StockExchange stockExchange);
-	@Query("Select s.company from CompanyStockExchangeMap s where s.stockExchange=:stockExchange")
-	List<Company> findCompanyByStockExchange(StockExchange stockExchange);
+	
+//	@Query("Select c from CompanyStockExchangeMap c where c.stockExchange=:stockExchange")
+	List<CompanyStockExchangeMap> findByStockExchange(StockExchange stockExchange);
+	
+	
 }

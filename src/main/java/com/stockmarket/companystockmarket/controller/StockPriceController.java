@@ -23,55 +23,53 @@ import com.stockmarket.companystockmarket.service.StockPriceServices;
 
 @RestController
 @CrossOrigin
-@RequestMapping(
-		value= "/stockprices",
-		method = {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
+@RequestMapping(value = "/stockprices", method = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
+		RequestMethod.DELETE })
 public class StockPriceController {
 	@Autowired
 	private StockPriceServices stockPriceServices;
-	
+
 	@GetMapping("")
-	public ResponseEntity<List<StockPrice>> getCompanies(){
+	public ResponseEntity<List<StockPrice>> getCompanies() {
 		List<StockPrice> stockPrices = stockPriceServices.getStockPrice();
 		return ResponseEntity.ok(stockPrices);
 	}
-	
+
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getStockPrice(@PathVariable Long id){
+	public ResponseEntity<?> getStockPrice(@PathVariable Long id) {
 		StockPrice stockPrice = stockPriceServices.findById(id);
-		if (stockPrice==null) {
+		if (stockPrice == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("StockPrice not found");
 		}
 		return ResponseEntity.ok(stockPrice);
 	}
-	
-	@PostMapping(path = "/add", consumes="application/json" , produces = "application/json")
-	public ResponseEntity<?> addStockPrice(@RequestBody StockPrice stockPrice){
-		stockPrice = stockPriceServices.addStockPrice(stockPrice);
-		if (stockPrice==null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("StockPrice already registered");
+
+	@PostMapping(path = "/add", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> addStockPrice(@RequestBody List<StockPrice> stockPrices) {
+		for (StockPrice stockPrice : stockPrices) {
+			stockPrice = stockPriceServices.addStockPrice(stockPrice);
+			if (stockPrice == null) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("StockPrice already registered");
+			}
 		}
-		URI location = ServletUriComponentsBuilder
-				.fromCurrentRequest()
-				.path("/{id}")
-				.buildAndExpand(stockPrice.getId())
-				.toUri();
-		return ResponseEntity.created(location).build();
+//		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(stockPrice.getId())
+//				.toUri();
+		return ResponseEntity.ok("Stock Prices Added");
 	}
-	
-	@PutMapping(path = "/update", consumes="application/json" , produces = "application/json")
-	public ResponseEntity<?> updateStockPrice(@RequestBody StockPrice stockPrice){
+
+	@PutMapping(path = "/update", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<?> updateStockPrice(@RequestBody StockPrice stockPrice) {
 		stockPrice = stockPriceServices.updateStockPrice(stockPrice);
-		if (stockPrice==null) {
+		if (stockPrice == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("StockPrice not found");
 		}
 		return ResponseEntity.ok(stockPrice);
 	}
-	
-	@DeleteMapping(path = "/delete/{id}", consumes="application/json" , produces = "application/json")
-	public ResponseEntity<?> deleteStockPrice(@PathVariable Long id){
+
+	@DeleteMapping(path = "/delete/{id}", produces = "application/json")
+	public ResponseEntity<?> deleteStockPrice(@PathVariable Long id) {
 		id = stockPriceServices.deleteById(id);
-		if (id==null) {
+		if (id == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("StockPrice not found");
 		}
 		return ResponseEntity.ok(id);

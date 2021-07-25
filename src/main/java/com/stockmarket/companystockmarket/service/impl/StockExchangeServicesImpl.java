@@ -40,8 +40,10 @@ public class StockExchangeServicesImpl implements StockExchangeServices {
 
 	@Override
 	public StockExchange updateStockExchange(StockExchange stockExchange) {
-		if(!stockExchangeRepository.findById(stockExchange.getId()).isPresent()
-				|| stockExchangeRepository.findByName(stockExchange.getName())==null)
+		if(!stockExchangeRepository.findById(stockExchange.getId()).isPresent())
+			return null;
+		StockExchange stockExchange2 = stockExchangeRepository.findByName(stockExchange.getName());
+		if(stockExchange2!=null && !stockExchange.getId().equals(stockExchange2.getId()))
 			return null;
 		return stockExchangeRepository.save(stockExchange);
 	}
@@ -52,15 +54,6 @@ public class StockExchangeServicesImpl implements StockExchangeServices {
 			return null;
 		stockExchangeRepository.deleteById(id);
 		return id;
-	}
-
-	@Override
-	public List<Company> getCompanies(Long id) {
-		StockExchange stockExchange = stockExchangeRepository.findById(id).get();
-		if(stockExchange==null) {
-			return null;
-		}
-		return companyStockExchangeMapServices.findByStockExchange(stockExchange);
 	}
 
 	@Override

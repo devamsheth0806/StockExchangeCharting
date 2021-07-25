@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ import lombok.NonNull;
 public class StockPrice {
 	@Id
 	@GeneratedValue
-	private long id;
+	private Long id;
 	
 	@NonNull
 	private String exchangeName;
@@ -34,13 +35,18 @@ public class StockPrice {
 	@NonNull
 	private String companyCode;
 	
-	private LocalDateTime localDateTime;
+//	private LocalDateTime localDateTime;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Company company;
 
+	@NonNull
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private LocalDate datee;
+	
+	@NonNull
+	 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
 	private LocalTime timee;
 	
 	private Double sharePrice;

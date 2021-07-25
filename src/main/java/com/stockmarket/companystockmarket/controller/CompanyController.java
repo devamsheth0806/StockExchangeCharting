@@ -51,6 +51,15 @@ public class CompanyController {
 		return ResponseEntity.ok(companies);
 	}
 	
+	@GetMapping("/getByName")
+	public ResponseEntity<?> getCompanyByName(@RequestParam("companyName") String companyName){
+		Company company = companyServices.findByName(companyName);
+		if (company==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Company not found");
+		}
+		return ResponseEntity.ok(company);
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getCompany(@PathVariable Long id){
 		Company company = companyServices.findById(id).get();
@@ -110,14 +119,14 @@ public class CompanyController {
 	
 	@PutMapping(path = "/update", consumes="application/json" , produces = "application/json")
 	public ResponseEntity<?> updateCompany(@RequestBody Company company){
-		company = companyServices.editCompany(company);
+		company = companyServices.updateCompany(company);
 		if (company==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Company not found");
 		}
 		return ResponseEntity.ok(company);
 	}
 	
-	@DeleteMapping(path = "/delete/{id}", consumes="application/json" , produces = "application/json")
+	@DeleteMapping(path = "/delete/{id}", produces = "application/json")
 	public ResponseEntity<?> deleteCompany(@PathVariable Long id){
 		id = companyServices.deleteCompany(id);
 		if (id==null) {

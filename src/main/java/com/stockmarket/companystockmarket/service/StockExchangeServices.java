@@ -12,6 +12,4 @@ public interface StockExchangeServices {
 	public StockExchange addStockExchange(StockExchange stockExchange);
 	public StockExchange updateStockExchange(StockExchange stockExchange);
 	public Long deleteStockExchange(Long id);
-	public List<Company> getCompanies(Long id);
-//	public StockExchange addCompanyToStockExchange(String stockExchangeName, CompanyDto companyDto);
 }

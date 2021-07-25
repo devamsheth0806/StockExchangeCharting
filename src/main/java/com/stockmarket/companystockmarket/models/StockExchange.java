@@ -24,7 +24,7 @@ import lombok.NonNull;
 public class StockExchange {
 	@Id
 	@GeneratedValue
-	private long id;
+	private Long id;
 	
 	@NonNull
 	private String name;

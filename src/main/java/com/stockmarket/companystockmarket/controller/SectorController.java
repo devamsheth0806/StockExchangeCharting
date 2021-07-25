@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -63,8 +62,8 @@ public class SectorController {
 	@GetMapping("/{id}/sectorprice")
 	public ResponseEntity<?> getSectorPrice(
 			@PathVariable Long id,
-			@RequestParam(name = "from", required=false) @DateTimeFormat(iso = ISO.DATE) LocalDate from,
-			@RequestParam(name = "to", required=false) @DateTimeFormat(iso = ISO.DATE) LocalDate to){
+			@RequestParam(name = "from", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+			@RequestParam(name = "to", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to){
 		Double stockPrices;
 		if(from == null)
 			stockPrices = sectorServices.getSectorPrice(id);
@@ -96,7 +95,7 @@ public class SectorController {
 		return ResponseEntity.ok(sector);
 	}
 	
-	@DeleteMapping(path = "/delete/{id}", consumes="application/json" , produces = "application/json")
+	@DeleteMapping(path = "/delete/{id}", produces = "application/json")
 	public ResponseEntity<?> deleteSector(@PathVariable Long id){
 		id = sectorServices.deleteById(id);
 		if (id==null) {

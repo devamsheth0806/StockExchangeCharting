@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.stockmarket.companystockmarket.models.Company;
+import com.stockmarket.companystockmarket.models.CompanyStockExchangeMap;
 import com.stockmarket.companystockmarket.models.StockExchange;
+import com.stockmarket.companystockmarket.service.CompanyStockExchangeMapServices;
 import com.stockmarket.companystockmarket.service.StockExchangeServices;
 
 @RestController
@@ -31,6 +33,9 @@ public class StockExchangeController {
 
 	@Autowired
 	StockExchangeServices stockExchangeServices;
+	
+	@Autowired
+	CompanyStockExchangeMapServices companyStockExchangeMapServices;
 
 	@GetMapping("")
 	public ResponseEntity<List<StockExchange>> getStockExchanges() {
@@ -44,15 +49,6 @@ public class StockExchangeController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Stock Exchange not found");
 		}
 		return ResponseEntity.ok(stockExchange);
-	}
-
-	@GetMapping("/{id}/stockexchangecompanies")
-	public ResponseEntity<?> getCompaniesByStockExchange(@PathVariable Long id) {
-		List<Company> companies = stockExchangeServices.getCompanies(id);
-		if (companies == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Stock Exchange not found");
-		}
-		return ResponseEntity.ok(companies);
 	}
 
 	@PostMapping(path = "/add", consumes = "application/json", produces = "application/json")
@@ -75,7 +71,7 @@ public class StockExchangeController {
 		return ResponseEntity.ok(stockExchange);
 	}
 
-	@DeleteMapping(path = "/delete/{id}", consumes = "application/json", produces = "application/json")
+	@DeleteMapping(path = "/delete/{id}", produces = "application/json")
 	public ResponseEntity<?> deleteStockExchange(@PathVariable Long id) {
 		id = stockExchangeServices.deleteStockExchange(id);
 		if (id == null) {
