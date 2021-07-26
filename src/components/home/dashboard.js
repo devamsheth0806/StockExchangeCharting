@@ -9,12 +9,15 @@ import Ipos from "../ipos/ipos.component";
 import Charts from "../charts/charts-common";
 import LogOut from "../users/LogOut";
 import UserContext from "../../contexts/userContext";
+import Users from "../users/users.component";
+import reactSessionApi from "react-session-api";
 
 class Dashboard extends Component {
   static contextType = UserContext;
   render() {
+    const userSession = reactSessionApi.get("Role");
     return (
-      (this.context.user != null && this.context.user != undefined ) ?
+      (this.context.user != null && this.context.user != undefined && userSession != undefined) ?
         (<div>
           <NavBar url={this.props.match.url} />
           <Redirect to={`${this.props.match.path}/stockprices`} />
@@ -25,6 +28,11 @@ class Dashboard extends Component {
           <Route exact path={`${this.props.match.path}/ipos`} component={Ipos} />
           <Route exact path={`${this.props.match.path}/comparisoncharts`} component={Charts} />
           <Route exact path={`${this.props.match.path}/logout`} component={LogOut} />
+          {this.context.user == "ADMIN" ?
+            <Route exact path={`${this.props.match.path}/users`} component={Users} />
+            :
+            null
+          }
         </div>)
         :
         <Redirect to="/" />

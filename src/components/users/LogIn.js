@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import userServices from "../../services/user.services";
+import Session from "react-session-api";
 class LogIn extends Component {
   _isMounted = false;
   constructor() {
@@ -17,21 +18,27 @@ class LogIn extends Component {
   }
   async logIn(creds) {
     if (this._isMounted) {
-      const response = await userServices.login(creds).catch(function (error) {
+      var response = "";
+      const error = await userServices.login(creds).then(res => {
+        response = res;
+      }).catch(function (error) {
         return error.response;
       });
       if (response.status == 200) {
         this.props.setUser("USER");
+        Session.set("Authorization", `Bearer ${response.data.token}`);
+        Session.set("Username", creds.username);
+        Session.set("Role", "USER");
         this.setState({
           status: response.status,
           errors: response.data,
           redirect: true
-        })
+        });
       }
       else
         this.setState({
           status: response.status,
-          errors: response.data
+          errors: error.data.error
         })
     }
   }
@@ -108,10 +115,10 @@ class LogIn extends Component {
                   </div>
                 </div>
                 {
-                  (this.state.status != 200)
+                  (this.state.errors != null)
                     ?
                     <div className="text-danger text-center">
-                      {this.state.errors}
+                      {JSON.stringify(this.state.errors)}
                     </div>
                     :
                     null

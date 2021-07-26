@@ -4,11 +4,13 @@ import Select from "react-select";
 import userServices from "../../services/user.services";
 
 class SignUp extends Component {
-
+  _isMounted = false;
   constructor() {
     super();
     this.state = {
       redirect: false,
+      status: null,
+      errors: null,
       user: {}
     }
     this.signUp = this.signUp.bind(this);
@@ -16,17 +18,31 @@ class SignUp extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   async signUp(user) {
-    await userServices.signUp(user);
+    if (this._isMounted) {
+      const response = await userServices.signUp(user).catch(function (error) {
+        return error.response;
+      });
+      if (response.status == 201) {
+        this.setState({
+          status: response.status,
+          errors: response.data,
+          redirect: true
+        })
+      }
+      else
+        this.setState({
+          status: response.status,
+          errors: response.data
+        })
+      console.log(this.state);
+    }
   }
 
   handleSubmit(event) {
     event.preventDefault();
     var user = this.state.user;
     user.id = -1;
-    this.signUp(this.state.user);
-    this.setState({
-      redirect: true
-    })
+    this.signUp(user);
   }
 
   handleChange = (event) => {
@@ -36,6 +52,14 @@ class SignUp extends Component {
     else
       user.role = event.value;
     this.setState({ user: user });
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
@@ -128,6 +152,17 @@ class SignUp extends Component {
                     </form>
                   </div >
                 </div >
+                {
+                  (this.state.errors != null)
+                    ?
+                    <div className="text-danger text-center">                      
+                        <div>
+                          {JSON.stringify(this.state.errors)}
+                        </div>
+                    </div>
+                    :
+                    null
+                }
               </div >
             </div >
           </div >

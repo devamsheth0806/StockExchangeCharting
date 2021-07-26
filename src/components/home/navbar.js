@@ -1,7 +1,9 @@
 import { Component } from "react";
 import { NavLink } from "react-router-dom";
+import UserContext from "../../contexts/userContext";
 
 class NavBar extends Component {
+  static contextType = UserContext;
   render() {
     return (
       <nav className="navbar navbar-expand-md navbar-light bg-light mb-4">
@@ -38,6 +40,18 @@ class NavBar extends Component {
                   Comparison Charts
                 </li>
               </NavLink>
+              {
+                this.context.user == "ADMIN"
+                  ?
+                  <NavLink exact to={`${this.props.url}/users`} className="nav-link">
+                    <li className="nav-item">
+                      Users
+                    </li>
+                  </NavLink>
+                  :
+                  null
+              }
+
               <NavLink exact to={`${this.props.url}/logout`} className="nav-link">
                 <li className="nav-item">
                   Logout

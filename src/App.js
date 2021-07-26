@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Redirect, Route } from "react-router-dom";
 import Title from "./components/home/title";
 import Home from './components/home/home';
 import LogIn from './components/users/LogIn';
@@ -7,6 +7,7 @@ import AdminLogIn from './components/users/AdminLogin';
 import SignUp from './components/users/SignUp';
 import Dashboard from './components/home/dashboard';
 import { UserProvider } from "./contexts/userContext";
+import reactSessionApi from "react-session-api";
 
 class App extends Component {
 
@@ -23,9 +24,17 @@ class App extends Component {
   };
 
   render() {
+
+    var sessionRedirect = null;
+    if (reactSessionApi.get("Role") != undefined) {
+      this.setState({ user: reactSessionApi.get("Role") });
+      sessionRedirect = < Redirect to="/Dashboard" />
+    }
+
     return (
       <BrowserRouter>
         <Title />
+        {sessionRedirect}
         <Route exact path="/" component={Home} />
         <Route exact path="/UserLogin" >
           <LogIn setUser={this.state.setUser} />

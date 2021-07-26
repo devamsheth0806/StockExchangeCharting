@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
+import reactSessionApi from "react-session-api";
 import userServices from "../../services/user.services";
 class AdminLogIn extends Component {
   _isMounted = false;
@@ -17,11 +18,17 @@ class AdminLogIn extends Component {
   }
   async logIn(creds) {
     if (this._isMounted) {
-      const response = await userServices.adminlogin(creds).catch(function (error) {
+      var response = "";
+      const error = await userServices.adminlogin(creds).then(res => {
+        response = res;
+      }).catch(function (error) {
         return error.response;
       });
       if (response.status == 200) {
         this.props.setUser("ADMIN");
+        reactSessionApi.set("Authorization", `Bearer ${response.data.token}`);
+        reactSessionApi.set("Username", creds.username);
+        reactSessionApi.set("Role", "ADMIN");
         this.setState({
           status: response.status,
           errors: response.data,
@@ -31,7 +38,7 @@ class AdminLogIn extends Component {
       else
         this.setState({
           status: response.status,
-          errors: response.data
+          errors: error.data.error
         })
     }
   }
@@ -105,10 +112,10 @@ class AdminLogIn extends Component {
                   </div>
                 </div>
                 {
-                  (this.state.status != 200)
+                  (this.state.errors != null)
                     ?
                     <div className="text-danger text-center">
-                      {this.state.errors}
+                      {JSON.stringify(this.state.errors)}
                     </div>
                     :
                     null

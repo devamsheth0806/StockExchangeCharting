@@ -1,9 +1,15 @@
 import { Component } from "react";
 import { Redirect } from "react-router-dom";
-
-class LogOut extends Component{
-  render(){
-    return(
+import Session from "react-session-api";
+import UserContext from "../../contexts/userContext";
+class LogOut extends Component {
+  static contextType = UserContext;
+  componentDidMount(){
+    Session.clear();
+    this.context.setUser(null);
+  }
+  render() {
+    return (
       <div>
         <Redirect to="/" />
         Logout
