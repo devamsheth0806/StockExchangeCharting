@@ -1,0 +1,9 @@
+1. First user would register itself by using Sign up button on home page
+2. User would receive a confirmation email on successful registration
+3. User would not be able to sign in without confirmation, so he/she would be required get confirmed by clicking the confirmation link provided in mail.
+4. After confirmation, user can login based on his/her authorization.
+	- If admin, then possible to be logged in as either admin or user
+	- If user, then possible to be logged in as user only
+5. As user would be verified, a token would be generated and would be used to access second part of application that is stock market charting
+6. Admin user would have all the editing rights, where as user would only have rights to view it
+7. On logout, it would again bring back to home page
