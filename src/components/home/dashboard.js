@@ -10,12 +10,11 @@ import Charts from "../charts/charts-common";
 import LogOut from "../users/LogOut";
 import UserContext from "../../contexts/userContext";
 import Users from "../users/users.component";
-import reactSessionApi from "react-session-api";
 
 class Dashboard extends Component {
   static contextType = UserContext;
   render() {
-    const userSession = reactSessionApi.get("Role");
+    const userSession = sessionStorage.getItem("Role");
     return (
       (this.context.user != null && this.context.user != undefined && userSession != undefined) ?
         (<div>

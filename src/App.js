@@ -7,7 +7,6 @@ import AdminLogIn from './components/users/AdminLogin';
 import SignUp from './components/users/SignUp';
 import Dashboard from './components/home/dashboard';
 import { UserProvider } from "./contexts/userContext";
-import reactSessionApi from "react-session-api";
 
 class App extends Component {
 
@@ -22,19 +21,33 @@ class App extends Component {
   setUser = (user) => {
     this.setState({ user: user })
   };
+  componentDidMount() {
+    if (sessionStorage.getItem("Role") != undefined) {
+      if (this.state.user == null) {
+        this.setState({ user: sessionStorage.getItem("Role") });
+      }
+    }
+  }
+
+  componentDidUpdate() {
+    if (sessionStorage.getItem("Role") != undefined) {
+      if (this.state.user == null) {
+        this.setState({ user: sessionStorage.getItem("Role") });
+      }
+    }
+  }
 
   render() {
 
     var sessionRedirect = null;
-    if (reactSessionApi.get("Role") != undefined) {
-      this.setState({ user: reactSessionApi.get("Role") });
-      sessionRedirect = < Redirect to="/Dashboard" />
+    if (sessionStorage.getItem("Role") != undefined) {
+      sessionRedirect =
+        < Redirect to="/Dashboard" />
     }
 
     return (
       <BrowserRouter>
         <Title />
-        {sessionRedirect}
         <Route exact path="/" component={Home} />
         <Route exact path="/UserLogin" >
           <LogIn setUser={this.state.setUser} />
@@ -46,6 +59,7 @@ class App extends Component {
         <UserProvider value={this.state}>
           <Route path='/Dashboard' component={Dashboard} />
         </UserProvider>
+        {sessionRedirect}
       </BrowserRouter>
     )
   }

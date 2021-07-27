@@ -1,6 +1,6 @@
+import { CircularProgress } from "@material-ui/core";
 import { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
-import reactSessionApi from "react-session-api";
 import userServices from "../../services/user.services";
 class AdminLogIn extends Component {
   _isMounted = false;
@@ -8,6 +8,7 @@ class AdminLogIn extends Component {
     super();
     this.state = {
       redirect: false,
+      loading:false,
       status: null,
       errors: null,
       creds: {}
@@ -19,6 +20,7 @@ class AdminLogIn extends Component {
   async logIn(creds) {
     if (this._isMounted) {
       var response = "";
+      this.setState({ loading: true });
       const error = await userServices.adminlogin(creds).then(res => {
         response = res;
       }).catch(function (error) {
@@ -26,18 +28,20 @@ class AdminLogIn extends Component {
       });
       if (response.status == 200) {
         this.props.setUser("ADMIN");
-        reactSessionApi.set("Authorization", `Bearer ${response.data.token}`);
-        reactSessionApi.set("Username", creds.username);
-        reactSessionApi.set("Role", "ADMIN");
+        sessionStorage.setItem("Authorization", `Bearer ${response.data.token}`);
+        sessionStorage.setItem("Username", creds.username);
+        sessionStorage.setItem("Role", "ADMIN");
         this.setState({
           status: response.status,
           errors: response.data,
+          loading: false,
           redirect: true
         })
       }
       else
         this.setState({
           status: response.status,
+          loading: false,
           errors: error.data.error
         })
     }
@@ -100,14 +104,21 @@ class AdminLogIn extends Component {
                           onChange={this.handleChange}
                           required />
                       </div>
-                      <div className="text-center">
-                        <input type="submit" value="Login" className="btn btn-primary btn-block m-2" />
-                        <Link to="/">
-                          <button className="btn btn-danger btn-block m-2">
-                            Cancel
-                          </button>
-                        </Link>
-                      </div>
+                      {this.state.loading
+                        ?
+                        <div className="w-100 text-center">
+                          <CircularProgress />
+                        </div>
+                        :
+                        <div className="text-center">
+                          <input type="submit" value="Login" className="btn btn-primary btn-block m-2" />
+                          <Link to="/">
+                            <button className="btn btn-danger btn-block m-2">
+                              Cancel
+                            </button>
+                          </Link>
+                        </div>
+                      }
                     </form>
                   </div>
                 </div>

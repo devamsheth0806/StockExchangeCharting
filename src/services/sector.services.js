@@ -1,4 +1,3 @@
-import reactSessionApi from "react-session-api";
 import http from "../http-common";
 
 class SectorServices{
@@ -6,9 +5,9 @@ class SectorServices{
   setHeaders() {
     http.defaults.headers = {
       "Content-type": "application/json",
-      "Authorization": reactSessionApi.get("Authorization"),
-      "Username": reactSessionApi.get("Username"),
-      "Role": reactSessionApi.get("Role")
+      "Authorization": sessionStorage.getItem("Authorization"),
+      "Username": sessionStorage.getItem("Username"),
+      "Role": sessionStorage.getItem("Role")
     }
   }
 

@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import UserContext from "../../contexts/userContext";
 import userServices from '../../services/user.services';
 class Users extends Component {
@@ -9,6 +10,7 @@ class Users extends Component {
     this.state = {
       update: false,
       fetched: false,
+      selfDelete: false,
       users: []
     };
 
@@ -20,7 +22,7 @@ class Users extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.update) {
+    if (this.state.update && !this.state.selfDelete) {
       this.fetchAllUsers();
       this.setState({ update: false });
     }
@@ -33,11 +35,18 @@ class Users extends Component {
     this._isMounted = false;
   }
 
-  async delete(id) {
+  async delete(id, username) {
     await userServices.deleteUser(id);
-    this.setState({
-      update: true
-    })
+    const sessionUser = sessionStorage.getItem("Username");
+    if (username == sessionUser)
+      this.setState({
+        update: true,
+        selfDelete: true
+      })
+    else
+      this.setState({
+        update: true
+      })
   }
 
   async fetchAllUsers() {
@@ -50,8 +59,7 @@ class Users extends Component {
     }
   }
 
-  render() {
-    console.log(this.state.users);
+  render() {    
     const users = this.state.users.map((user) => {
       return <tr key={user.id}>
         <td>{user.username}</td>
@@ -62,7 +70,7 @@ class Users extends Component {
           this.context.user == "ADMIN"
             ?
             <td>
-              <button className="btn btn-danger btn-sm" onClick={() => this.delete(user.id)} >
+              <button className="btn btn-danger btn-sm" onClick={() => this.delete(user.id, user.username)} >
                 Delete
               </button>
             </td>
@@ -72,6 +80,10 @@ class Users extends Component {
       </tr>
     });
     return (
+      (this.state.selfDelete)
+      ? 
+      <Redirect to="/Dashboard/logout" />
+      :
       <div className="container">
         <div className="d-flex flex-row justify-content-center">
           <h1 className="text-primary">Users</h1>

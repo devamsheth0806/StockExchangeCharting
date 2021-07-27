@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Link, Redirect } from "react-router-dom";
 import Select from "react-select";
 import userServices from "../../services/user.services";
-
+import { CircularProgress } from "@material-ui/core";
 class SignUp extends Component {
   _isMounted = false;
   constructor() {
@@ -11,6 +11,7 @@ class SignUp extends Component {
       redirect: false,
       status: null,
       errors: null,
+      loading: false,
       user: {}
     }
     this.signUp = this.signUp.bind(this);
@@ -19,22 +20,27 @@ class SignUp extends Component {
   }
   async signUp(user) {
     if (this._isMounted) {
-      const response = await userServices.signUp(user).catch(function (error) {
+      this.setState({ loading: true });
+      var response;
+      const error = await userServices.signUp(user).then(res => {
+        response = res;
+      }).catch(function (error) {
         return error.response;
       });
       if (response.status == 201) {
         this.setState({
           status: response.status,
           errors: response.data,
-          redirect: true
+          redirect: true,
+          loading: false
         })
       }
       else
         this.setState({
           status: response.status,
-          errors: response.data
+          loading: false,
+          errors: error.data.error
         })
-      console.log(this.state);
     }
   }
 
@@ -141,24 +147,31 @@ class SignUp extends Component {
                           maxLength="10"
                           required />
                       </div>
-                      <div className="w-100 text-center">
-                        <input type="submit" value="Submit" className="btn btn-primary btn-block m-2" />
-                        <Link to="/">
-                          <button className="btn btn-danger btn-block m-2">
-                            Cancel
-                          </button>
-                        </Link>
-                      </div>
+                      {this.state.loading
+                        ?
+                        <div className="w-100 text-center">
+                          <CircularProgress />
+                        </div>
+                        :
+                        <div className="w-100 text-center">
+                          <input type="submit" value="Submit" className="btn btn-primary btn-block m-2" />
+                          <Link to="/">
+                            <button className="btn btn-danger btn-block m-2">
+                              Cancel
+                            </button>
+                          </Link>
+                        </div>
+                      }
                     </form>
                   </div >
                 </div >
                 {
                   (this.state.errors != null)
                     ?
-                    <div className="text-danger text-center">                      
-                        <div>
-                          {JSON.stringify(this.state.errors)}
-                        </div>
+                    <div className="text-danger text-center">
+                      <div>
+                        {JSON.stringify(this.state.errors)}
+                      </div>
                     </div>
                     :
                     null

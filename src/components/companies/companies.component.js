@@ -3,6 +3,7 @@ import AddCompany from "./addCompany";
 import companyServices from '../../services/company.services';
 import Select from 'react-select';
 import UserContext from "../../contexts/userContext";
+import CompanyDetails from "./companyDetails";
 class Companies extends Component {
   static contextType = UserContext;
   _isMounted = false;
@@ -10,6 +11,8 @@ class Companies extends Component {
     super();
     this.state = {
       show: false,
+      showCompany: false,
+      company: null,
       searchedCompany: [],
       companies: [],
       id: null,
@@ -19,7 +22,9 @@ class Companies extends Component {
 
     this.searchRef = createRef();
     this.handleShow = this.handleShow.bind(this);
+    this.handleShowCompany = this.handleShowCompany.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.handleCloseCompany = this.handleCloseCompany.bind(this);
     this.fetchAllCompanies = this.fetchAllCompanies.bind(this);
     this.dosearch = this.dosearch.bind(this);
   }
@@ -28,8 +33,17 @@ class Companies extends Component {
     this.setState({ show: true, id: id });
   }
 
+  handleShowCompany(company) {
+    this.setState({ showCompany: true, company });
+  }
+
+
   handleClose() {
     this.setState({ update: true, show: false });
+  }
+
+  handleCloseCompany() {
+    this.setState({ showCompany: false, company: null });
   }
 
   componentDidMount() {
@@ -97,7 +111,11 @@ class Companies extends Component {
     if (this.state.searchedCompany.length > 0) {
       companies = this.state.searchedCompany.map((company) => {
         return <tr key={company.id}>
-          <td>{company.companyName}</td>
+          <td>
+            <button className="btn btn-link" onClick={() => this.handleShowCompany(company)}>
+              {company.companyName}
+            </button>
+          </td>
           <td>{company.ceo}</td>
           <td>{company.turnover}</td>
           <td>{company.sector.sectorName}</td>
@@ -129,7 +147,11 @@ class Companies extends Component {
     else {
       companies = this.state.companies.map((company) => {
         return <tr key={company.id}>
-          <td>{company.companyName}</td>
+          <td>
+            <button className="btn btn-link" onClick={() => this.handleShowCompany(company)}>
+              {company.companyName}
+            </button>
+          </td>
           <td>{company.ceo}</td>
           <td>{company.turnover}</td>
           <td>{company.sector.sectorName}</td>
@@ -168,6 +190,8 @@ class Companies extends Component {
 
 
     return (
+      (!this.state.showCompany)
+      ?
       <div className="container">
         <div className="d-flex flex-row justify-content-center">
           <h1 className="text-primary">Companies</h1>
@@ -195,7 +219,7 @@ class Companies extends Component {
           }
         </div>
         <div className="d-flex flex-row">
-          <table className="table table-striped">
+          <table className="table table-striped ">
             <thead className="thead-inverse thead-dark">
               <tr className="table-dark">
                 <th>Company name</th>
@@ -225,6 +249,24 @@ class Companies extends Component {
         </div>
         <AddCompany handleClose={this.handleClose} open={this.state.show} id={this.state.id} />
       </div >
+
+      :
+      (
+        <div className="container">
+            <div className="row">
+              <div className="col-xs-4">
+                <button className="btn btn-primary m-2" onClick={this.handleCloseCompany} >Back</button>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-3"></div>
+              <div className="col-6 text-center">
+                <CompanyDetails company={this.state.company} />
+              </div>
+              <div className="col-3"></div>
+            </div>
+          </div>
+      )
     )
   }
 }

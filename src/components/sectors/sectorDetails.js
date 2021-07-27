@@ -35,11 +35,14 @@ class SectorDetails extends Component {
 
   render() {
     const companies = this.state.companies.map(company => {
+      let stockExchanges = company.ipo.stockExchanges.map(stockExchange => {
+        return stockExchange.name;
+      })
       return <tr key={company.id}>
         <td>{company.companyName}</td>
         <td>{company.turnover}</td>
         <td>{company.ceo}</td>
-        <td>{company.boardOfDirectors}</td>
+        <td>{stockExchanges.join(",")}</td>
         <td>{company.companyBrief}</td>
       </tr>
     });
@@ -55,7 +58,7 @@ class SectorDetails extends Component {
                 <th>Company Name</th>
                 <th>Turnover</th>
                 <th>CEO</th>
-                <th>Board Of Directors</th>
+                <th>Stock Exchanges</th>
                 <th>Brief</th>
               </tr>
             </thead>
