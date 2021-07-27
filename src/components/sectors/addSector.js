@@ -39,7 +39,7 @@ class AddSector extends Component {
     this.setState({
       sector : response.data
     })
-    // console.log(response);
+    
   }
 
   handleSubmit(event) {
@@ -52,7 +52,6 @@ class AddSector extends Component {
     }
     else
       this.updateSector(sector);
-    // console.log(sector);
   }
 
   handleChange = (event) => {

@@ -8,7 +8,7 @@ class AdminLogIn extends Component {
     super();
     this.state = {
       redirect: false,
-      loading:false,
+      loading: false,
       status: null,
       errors: null,
       creds: {}
@@ -26,7 +26,7 @@ class AdminLogIn extends Component {
       }).catch(function (error) {
         return error.response;
       });
-      if (response.status == 200) {
+      if (response != undefined && response.status == 200) {
         this.props.setUser("ADMIN");
         sessionStorage.setItem("Authorization", `Bearer ${response.data.token}`);
         sessionStorage.setItem("Username", creds.username);
@@ -38,12 +38,20 @@ class AdminLogIn extends Component {
           redirect: true
         })
       }
-      else
-        this.setState({
-          status: response.status,
-          loading: false,
-          errors: error.data.error
-        })
+      else {
+        if (error.data.error == undefined)
+          this.setState({
+            status: error.status,
+            loading: false,
+            errors: error.data
+          })
+        else
+          this.setState({
+            status: error.status,
+            loading: false,
+            errors: error.data.error
+          })
+      }
     }
   }
 

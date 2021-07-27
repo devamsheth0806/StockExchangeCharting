@@ -23,11 +23,11 @@ class SignUp extends Component {
       this.setState({ loading: true });
       var response;
       const error = await userServices.signUp(user).then(res => {
-        response = res;
+        response = (res == undefined) ? "" : res;
       }).catch(function (error) {
         return error.response;
       });
-      if (response.status == 201) {
+      if (response != undefined && response.status == 201) {
         this.setState({
           status: response.status,
           errors: response.data,
@@ -35,12 +35,20 @@ class SignUp extends Component {
           loading: false
         })
       }
-      else
-        this.setState({
-          status: response.status,
-          loading: false,
-          errors: error.data.error
-        })
+      else{
+        if (error.data.error == undefined)
+          this.setState({
+            status: error.status,
+            loading: false,
+            errors: error.data
+          })
+        else
+          this.setState({
+            status: error.status,
+            loading: false,
+            errors: error.data.error
+          })
+      }
     }
   }
 

@@ -148,8 +148,6 @@ class CompanyCharts extends Component {
           schema
         );
 
-        console.log(fusionTable);
-
         prevDs.data = fusionTable;
         configs.dataSource = prevDs;
         this.setState({
@@ -214,11 +212,15 @@ class CompanyCharts extends Component {
       };
     });
 
-    // console.log(companyOptions);
     const chartConfigs = this.state.chartConfigs;
 
     return (
       <div className="App">
+        <div className="input-group row text-center">
+          <div className="col fs-2">
+            Companies Comparison Chart
+          </div>
+        </div>
         <div className="input-group row">
           <div className="col-sm-10">
             <Select

@@ -46,11 +46,9 @@ class UploadStockPrices extends Component {
       /* Get first worksheet */
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
-      // console.log(ws);
 
       /* Convert array of arrays */
       const data = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false });
-      // console.log(JSON.stringify(data) + "this data needs to be passed to rest endpoint to save prices");
 
       // remove header row
       data.shift();
@@ -67,8 +65,6 @@ class UploadStockPrices extends Component {
         }
         formattedData.push(share);
       });
-
-      // console.log(formattedData);
 
       /* Update state */
       this.setState({ data: formattedData });

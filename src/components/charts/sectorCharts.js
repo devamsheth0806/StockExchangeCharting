@@ -58,8 +58,6 @@ class SectorCharts extends Component {
 
       let data = this.state.sectorPrices;
 
-      // console.log(data);
-
       if (Object.keys(data).length !== 0) {
         var configs = Object.assign({}, this.state.chartConfigs);
         var prevDs = configs.dataSource;
@@ -89,8 +87,6 @@ class SectorCharts extends Component {
       });
 
       const data = this.state.sectorPrices;
-
-      // console.log(data);
 
       if (Object.keys(data).length !== 0) {
         var configs = Object.assign({}, this.state.chartConfigs);
@@ -165,12 +161,15 @@ class SectorCharts extends Component {
       };
     });
 
-    // console.log(sectorOptions);
-
     const chartConfigs = this.state.chartConfigs;
 
     return (
       <div className="App">
+        <div className="input-group row text-center">
+          <div className="col fs-2">
+            Sectors Comparison Chart
+          </div>
+        </div>
         <div className="input-group row">
           <div className="col-sm-10">
             <Select

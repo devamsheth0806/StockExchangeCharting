@@ -30,7 +30,7 @@ class AddStockExchange extends Component {
     this.setState({
       stockExchange: response.data
     })
-    // console.log(response);
+    
   }
 
   async addStockExchange(stockExchange) {

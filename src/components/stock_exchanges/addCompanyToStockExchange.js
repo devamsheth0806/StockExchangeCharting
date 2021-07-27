@@ -44,7 +44,6 @@ class AddCompanyToStockExchange extends Component {
     this.setState({
       companyStockMap: response.data
     });
-    console.log(this.state);
   }
 
   async addCompanyToStockExchange(companyStockMap) {
@@ -59,7 +58,6 @@ class AddCompanyToStockExchange extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    // console.log(this.state.companyStockMap);
     var companyStockMap = this.state.companyStockMap;
     companyStockMap["stockExchangeName"] = this.props.name;
     const id = this.props.id;
