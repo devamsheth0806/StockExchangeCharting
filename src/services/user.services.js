@@ -1,4 +1,3 @@
-import reactSessionApi from "react-session-api";
 import http from "../http-auth";
 class UserServices {
 
