@@ -53,9 +53,9 @@ public class StockPriceController {
 			catch(Exception e) {
 				e.printStackTrace();
 			}
-			if (stockPrice == null) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("StockPrice already registered");
-			}
+// 			if (stockPrice == null) {
+// 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("StockPrice already registered");
+// 			}
 		}
 //		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(stockPrice.getId())
 //				.toUri();
