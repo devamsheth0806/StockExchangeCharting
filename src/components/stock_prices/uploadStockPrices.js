@@ -23,7 +23,12 @@ class UploadStockPrices extends Component {
   }
 
   async submitShares(shares) {
-    await stockPriceServices.addStockPrices(shares);
+    var response = "";
+    const error = await stockPriceServices.addStockPrices(shares).then(res => {
+      response = res;
+    }).catch(function (error) {
+      return error.response;
+    });
     this.props.handleClose();
   }
 
@@ -41,7 +46,7 @@ class UploadStockPrices extends Component {
 
       /* Parse data */
       const bstr = e.target.result;
-      const wb = XLSX.read(bstr, { type: rABS ? "binary" : "array" });
+      const wb = XLSX.read(bstr, { type: rABS ? "binary" : "array" ,  dateNF: 'dd/mm/yyyy;@'});
 
       /* Get first worksheet */
       const wsname = wb.SheetNames[0];
