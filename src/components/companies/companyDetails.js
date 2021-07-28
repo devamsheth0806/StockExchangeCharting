@@ -8,9 +8,12 @@ class CompanyDetails extends Component {
   }
   render() {
     const company = this.props.company;
-    const stockExchanges = company.ipo.stockExchanges.map(stockExchange => {
-      return stockExchange.name;
-    })
+    var stockExchanges = [];
+    if (company.ipo != undefined) {
+      stockExchanges = company.ipo.stockExchanges.map(stockExchange => {
+        return stockExchange.name;
+      })
+    }
     return (
       <Card>
         <CardHeader title={`${company.companyName}`} />
