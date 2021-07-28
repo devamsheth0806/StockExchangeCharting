@@ -25,6 +25,13 @@ import lombok.NonNull;
 @Table(name = "Sector")
 public class Sector {
 	
+	public Sector(Long i, String string, String string2) {
+		this.id = i;
+		this.sectorName = string;
+		this.brief = string2;
+	}
+
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
