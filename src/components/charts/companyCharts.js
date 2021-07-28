@@ -11,28 +11,60 @@ let chartConfigs = {
   type: 'timeseries',// The chart type
   width: '100%', // Width of the chart
   // height: '100%', // Height of the chart
-  dataFormat: 'json', // Data type
+  // dataFormat: 'json', // Data type
+  renderAt: "container",
   dataSource: {
     // Chart Configuration
     "navigator": {
       "enabled": 0
     },
     "chart": {
-      "caption": "Stock Price",
-      "subCaption": "In Rupees",
-      "xAxisName": "Company",
-      "yAxisName": "Share Price",
-      "numberSuffix": "Rs.",
-      "theme": "fusion",
+      "lineThickness": "2",
+      "theme": "fusion"
     },
+    "caption": {
+      text: "Stock Price",
+    },
+    "subCaption": {
+      text: "In Rupees"
+    },
+    series: "Company",
+    "yAxis": [
+      {
+        plot: [
+          {
+            value: "Value",
+            connectnulldata: true
+          }
+        ],
+        title: "Share Price",
+        format: {
+          prefix: "Rs."
+        }
+      }
+    ],
     "xAxis": {
-      "outputTimeFormat": {
-        "minute": "%d/%m/%Y %H:%M:%S",
-        "second": "%d/%m/%Y %H:%M:%S"
+      // "outputTimeFormat": {
+      //   "year": "%d/%m/%Y %H:%M:%S",
+      //   "month": "%d/%m/%Y %H:%M:%S",
+      //   "day": "%d/%m/%Y %H:%M:%S",
+      //   "hour": "%d/%m/%Y %H:%M:%S",
+      //   "millisecond": "%d/%m/%Y %H:%M:%S",
+      //   "minute": "%d/%m/%Y %H:%M:%S",
+      //   "second": "%d/%m/%Y %H:%M:%S"
+      // },
+      "binning": {
+        "year": [],
+        "month": [],
+        "day": [1],
+        hour: [],
+        minute: [],
+        second: [],
+        millisecond: []
       }
     }
   }
-};
+}
 
 class CompanyCharts extends Component {
   _isMounted = false;
@@ -67,7 +99,7 @@ class CompanyCharts extends Component {
         for (var company in this.state.stockPrices) {
           this.state.stockPrices[company].forEach(share => {
             data.push(
-              [`${share.datee} ${share.timee}`, share.sharePrice, company]
+              [`${share.datee} ${share.timee}`, company, share.sharePrice]
             );
           });
         };
@@ -79,14 +111,12 @@ class CompanyCharts extends Component {
             "format": "%d/%m/%Y %H:%M:%S"
           },
           {
-            "name": "Value",
-            "type": "number"
-          },
-          {
             "name": "Company",
             "type": "string",
-            "column": "Company",
-            "index": 2
+          },
+          {
+            "name": "Value",
+            "type": "number"
           }
         ]
 
@@ -120,7 +150,7 @@ class CompanyCharts extends Component {
         for (var company in this.state.stockPrices) {
           this.state.stockPrices[company].forEach(share => {
             data.push(
-              [`${share.datee} ${share.timee}`, share.sharePrice, company]
+              [`${share.datee} ${share.timee}`, company, share.sharePrice]
             );
           });
         };
@@ -132,14 +162,12 @@ class CompanyCharts extends Component {
             "format": "%d/%m/%Y %H:%M:%S"
           },
           {
-            "name": "Value",
-            "type": "number"
-          },
-          {
             "name": "Company",
             "type": "string",
-            "column": "Company",
-            "index": 2
+          },
+          {
+            "name": "Value",
+            "type": "number"
           }
         ]
 
@@ -197,10 +225,10 @@ class CompanyCharts extends Component {
       const chartConfigs = this.state.chartConfigs;
       chartConfigs.dataSource.data = [];
       this.setState({
-        chartConfigs
+        chartConfigs,
+        stockPrices: {},
       });
     }
-
   }
 
   render() {

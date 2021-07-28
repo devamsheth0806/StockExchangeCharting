@@ -147,7 +147,8 @@ class SectorCharts extends Component {
       const chartConfigs = this.state.chartConfigs;
       chartConfigs.dataSource.data = [];
       this.setState({
-        chartConfigs
+        chartConfigs,
+        sectorPrices:{}
       });
     }
   }
