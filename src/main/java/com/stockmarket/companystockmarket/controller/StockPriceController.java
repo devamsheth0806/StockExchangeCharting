@@ -47,10 +47,15 @@ public class StockPriceController {
 	@PostMapping(path = "/add", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> addStockPrice(@RequestBody List<StockPrice> stockPrices) {
 		for (StockPrice stockPrice : stockPrices) {
+			try {
 			stockPrice = stockPriceServices.addStockPrice(stockPrice);
-			if (stockPrice == null) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("StockPrice already registered");
 			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+// 			if (stockPrice == null) {
+// 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("StockPrice already registered");
+// 			}
 		}
 //		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(stockPrice.getId())
 //				.toUri();
