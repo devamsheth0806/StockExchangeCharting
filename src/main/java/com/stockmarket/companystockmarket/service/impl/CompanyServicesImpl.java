@@ -93,12 +93,12 @@ public class CompanyServicesImpl implements CompanyServices {
 
 	@Override
 	public List<StockExchange> getStockExchanges(Long id) {
-		Company company = compRepo.findById(id).get();
-		if (company==null) {
+		Optional<Company> company = compRepo.findById(id);
+		if (!company.isPresent()) {
 			return null;
 		}
 		List<StockExchange> stockExchanges = new ArrayList<StockExchange>();
-		companyStockExchangeMapServices.findByCompany(company)
+		companyStockExchangeMapServices.findByCompany(company.get())
 		.forEach(companyStockMap ->{
 			stockExchanges.add(companyStockMap.getStockExchange());
 		});
@@ -117,11 +117,7 @@ public class CompanyServicesImpl implements CompanyServices {
 	}
 	
 	public List<StockPrice> getCompanyStockPrice(Long id){
-		Company company = compRepo.findById(id).get();
-		if (company==null) {
-			return null;
-		}
-		return company.getStockPrices();
+		return compRepo.findCompanyStockPrices(id);
 	}
 
 }

@@ -27,7 +27,7 @@ public class StockExchangeServicesImpl implements StockExchangeServices {
 
 	@Override
 	public StockExchange findById(Long id) {
-		return stockExchangeRepository.getById(id);
+		return stockExchangeRepository.findById(id).get();
 	}
 
 	@Override
