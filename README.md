@@ -1,6 +1,6 @@
 # StockExchangeCharting
 
-Four branches:
+There are four branches in this repository:
 1. main: Deliverables
 2. front-end: ReactJs part
 3. back-end-authentication: Java Springboot User and authentication part
